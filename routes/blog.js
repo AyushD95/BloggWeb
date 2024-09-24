@@ -1,34 +1,24 @@
 const { Router}=require("express");
 const multer  = require('multer')
-const path =require("path")
 const router= Router();
-const fs = require('fs');
 const Blog=require("../models/blog");
 const Comment = require("../models/comments");
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinaryConfig');
 
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-    
-    const uploadPath =  path.resolve(`./public/uploads/${req.user._id}`)
-      
-    // Check if the directory exists; if not, create it
-    if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true });  // recursive: true ensures parent directories are created
-      }
+// Set up Cloudinary storage using Multer
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'blog_cover_images', // Folder name in your Cloudinary account
+    allowed_formats: ['jpg', 'png', 'jpeg'], // Allowed file types
+    public_id: (req, file) => `${req.user._id}/${Date.now()}-${file.originalname}` // Custom file name
+  }
+});
 
-      cb(null, uploadPath)
-    
-    },
-    filename: function (req, file, cb) {
-      const fileName= `${Date.now()}-${file.originalname}`
-      cb(null, fileName)
-    }
-  })
-
-
-  const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
 
 
 router.get("/add-new", (req,res)=>{
@@ -50,12 +40,12 @@ router.get("/:id", async (req,res)=>{
 router.post("/", upload.single('coverImage'),async (req,res)=>{
     const { title,body} =req.body;
 
-   const blog= await Blog.create({
-     body,
-     title,
-     createdBy: req.user._id,
-     coverImageURL: `/uploads/${req.user._id}/${req.file.filename}`
-    })
+    const blog = await Blog.create({
+      body,
+      title,
+      createdBy: req.user._id,
+      coverImageURL: req.file.path // Cloudinary URL
+    });
 
     return res.redirect(`/blog/${blog._id}`);
 })

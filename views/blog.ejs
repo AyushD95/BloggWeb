@@ -7,27 +7,45 @@
 <body>
     
     <%- include("./partials/nav") %>
-     
+
+
     <div class="container mt-4">
         <h1><%= blog.title %></h1>
-        <img src="<%= blog.coverImageURL %>" class="img-fluid" alt="Blog Image">
-
-        <pre class="mt-4"
-    style="
-    white-space: pre-wrap; 
-    word-wrap: break-word; 
-    font-family: 'Courier New', Courier, monospace; /* Use a clean, monospace font */
-    font-size: 16px; /* Adjust font size for readability */
-    line-height: 1.6; /* Increase line height for better spacing */
-    background-color: #f8f9fa; /* Light background for contrast */
-    padding: 15px; /* Add padding to create space around the text */
-    border: 1px solid #ddd; /* Light border for separation */
-    border-radius: 5px; /* Smooth the edges */
-    overflow: auto; /* In case of exceptionally long content, allows vertical scrolling */
-">
-    <%= blog.body %>
-</pre>
+        <div style="max-height: 450px; max-width: 1100px; overflow: hidden; margin: 0;"> <!-- Removed centering classes -->
+            <img src="<%= blog.coverImageURL %>" 
+                 class="img-fluid" 
+                 style="
+                     height: 100%; /* Ensures the image fills the height of the container */
+                     width: auto; /* Keeps the width proportional to the height */
+                     max-height: 450px; /* Maintained height */
+                     object-fit: cover; /* Ensures proper cropping if needed */
+                     margin: 0; /* Ensures no margin on the left */
+                 " 
+                 alt="Blog Image">
+        </div>
+    
+        <pre class="mt-4 w-100" 
+             style="
+             white-space: pre-wrap; 
+             word-wrap: break-word; 
+             font-family: 'Courier New', Courier, monospace; 
+             font-size: 16px; 
+             line-height: 1.6; 
+             background-color: #f8f9fa; 
+             padding: 15px; 
+             border: 1px solid #ddd; 
+             border-radius: 5px; 
+             overflow: auto;
+        ">
+            <%= blog.body %>
+        </pre>
     </div>
+    
+    
+    
+    
+    
+    
 
     <div class="container mt-4 mb-6">
 
